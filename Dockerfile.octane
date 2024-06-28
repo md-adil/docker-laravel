@@ -1,0 +1,10 @@
+ARG base
+FROM ${base}
+
+RUN pecl install -D 'enable-openssl="yes" enable-mysqlnd="yes" enable-swoole-curl="yes" enable-cares="yes"' swoole-5.1.3 && docker-php-ext-enable swoole
+
+COPY src/apache/entrypoint /bin/entrypoint
+RUN chmod +x /bin/entrypoint
+
+USER ${USER}
+ENTRYPOINT [ "entrypoint" ]

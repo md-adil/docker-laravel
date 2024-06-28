@@ -1,0 +1,20 @@
+ARG base
+FROM ${base}
+
+# Apache settings
+RUN a2enmod rewrite
+RUN echo 'ServerName localhost' >> /etc/apache2/apache2.conf
+
+# Configs
+COPY src/apache/default.conf /etc/apache2/sites-enabled/000-default.conf
+COPY src/apache/ports.conf /etc/apache2
+
+COPY src/apache/entrypoint /bin/entrypoint
+RUN chmod +x /bin/entrypoint
+
+USER ${USER}
+
+RUN mkdir /var/www/public
+RUN rm -rf /var/www/html
+
+ENTRYPOINT [ "entrypoint" ]

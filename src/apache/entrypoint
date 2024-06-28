@@ -1,0 +1,47 @@
+#!/bin/bash
+
+migrate() {
+    php artisan migrate --force $@
+}
+
+scheduler() {
+    local wait=${1:-60}
+    while true; do
+        php artisan schedule:run ${@:1}
+        sleep $wait
+    done
+}
+
+queue() {
+    php artisan queue:work $@
+}
+
+horizon() {
+    php artisan queue:work $@
+}
+
+server() {
+    apache2ctl -D FOREGROUND
+}
+
+if [ -n "$1" ]; then
+    case "$1" in
+    scheduler)
+        schedule ${@:2}
+        ;;
+    migrate)
+        migrate ${@:2}
+        ;;
+    server)
+        server
+        ;;
+    queue)
+        queue ${@:2}
+        ;;
+    *)
+        eval ${@:1}
+        ;;
+    esac
+else
+    server
+fi

@@ -1,0 +1,5 @@
+ARG base
+FROM ${base}
+
+RUN curl -L https://github.com/elastic/apm-agent-php/releases/download/v1.13.0/apm-agent-php_1.13.0_amd64.deb -o apm-agent.deb
+RUN dpkg -i apm-agent.deb && rm apm-agent.deb
