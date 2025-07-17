@@ -30,6 +30,7 @@ RUN pecl install -D 'enable-openssl="yes" \
     enable-sockets="yes" \
     enable-mysqlnd="yes" \
     enable-swoole-curl="yes" \
+    enable-swoole-json="yes" \
     enable-cares="yes"' \
     swoole-6.0.2 \
     && docker-php-ext-enable swoole
