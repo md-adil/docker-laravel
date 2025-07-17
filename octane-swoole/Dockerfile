@@ -6,12 +6,12 @@ RUN install-php-extensions \
     @composer \
     sockets \
     pdo_mysql \
-    mbstring \
     exif \
     pcntl \
     bcmath \
-    opcache \
+    zip \
     swoole
+
 # Install system dependencies
 # RUN apt-get update && apt-get install -y --no-install-recommends \
 #     curl \
@@ -47,12 +47,12 @@ RUN install-php-extensions \
 #     swoole-6.0.2 \
 #     && docker-php-ext-enable swoole
 
+# Installing composer
+# RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
 # PHP Production settings
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 COPY php /usr/local/etc/php/conf.d
-
-# Installing composer
-# RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 ARG user=laravel
 ARG uid=1000
