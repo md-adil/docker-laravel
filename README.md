@@ -16,11 +16,14 @@ Production base image for Laravel APIs running on [Laravel Octane](https://larav
 
 ## Tags
 
-| Tag | Description |
-|---|---|
-| `latest` | Latest build |
-| `php8.5-swoole6.2` | Latest build for PHP 8.5 / Swoole 6.2 |
-| `1.2.3` | Release built from git tag `v1.2.3` |
+| Debian | Alpine | Description |
+|---|---|---|
+| `latest` | `latest-alpine` | Latest build |
+| `1.2.3` | `1.2.3-alpine` | Release built from git tag `v1.2.3` |
+
+Swoole isn't pinned: each build uses the newest Swoole that `phpswoole/swoole` ships for PHP 8.5, which can be a release candidate.
+
+The Alpine image is about 4× smaller. Debian (glibc) is the safer default under load; load-test Alpine (musl) before using it in production.
 
 ## Environment variables
 
