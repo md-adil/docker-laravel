@@ -19,10 +19,7 @@ ARG uid=1000
 ARG gid=1000
 
 ENV USER=${user}
-# Octane reads OCTANE_HOST and OCTANE_PORT itself
 ENV OCTANE_SERVER=swoole \
-    OCTANE_HOST=0.0.0.0 \
-    OCTANE_PORT=8080 \
     PHP_MEMORY_LIMIT=256M \
     PHP_OPCACHE_VALIDATE_TIMESTAMPS=0 \
     LOG_CHANNEL=stderr
@@ -38,9 +35,9 @@ WORKDIR /var/www
 # Numeric so Kubernetes can verify runAsNonRoot
 USER ${uid}:${gid}
 
-EXPOSE ${OCTANE_PORT}
+EXPOSE 8080
 
 ENTRYPOINT [ "entrypoint.sh" ]
 
 # To change workers or max requests, override the command (e.g. Kubernetes args)
-CMD [ "php", "artisan", "octane:start", "--workers=auto", "--task-workers=auto", "--max-requests=500" ]
+CMD [ "php", "artisan", "octane:start", "--host=0.0.0.0", "--port=8080", "--workers=auto", "--task-workers=auto", "--max-requests=500" ]
