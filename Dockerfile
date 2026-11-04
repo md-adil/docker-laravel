@@ -17,17 +17,17 @@ RUN apt-get update \
 # PHP Production settings
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 COPY php /usr/local/etc/php/conf.d
+COPY --chmod=755 entrypoint.sh /usr/local/bin/
 
 ARG user=laravel
 ARG uid=1000
 ARG gid=1000
 
 ENV USER=${user}
+# Octane reads OCTANE_HOST and OCTANE_PORT itself
 ENV OCTANE_SERVER=swoole \
+    OCTANE_HOST=0.0.0.0 \
     OCTANE_PORT=8080 \
-    OCTANE_WORKERS=auto \
-    OCTANE_TASK_WORKERS=auto \
-    OCTANE_MAX_REQUESTS=500 \
     PHP_MEMORY_LIMIT=256M \
     PHP_OPCACHE_VALIDATE_TIMESTAMPS=0 \
     LOG_CHANNEL=stderr
@@ -45,8 +45,8 @@ USER ${uid}:${gid}
 
 EXPOSE ${OCTANE_PORT}
 
-# Skip the base image's supervisord entrypoint; run Octane directly
-ENTRYPOINT [ "docker-php-entrypoint" ]
+# Skip the base image's supervisord entrypoint; prepare storage/ then run Octane directly
+ENTRYPOINT [ "entrypoint.sh" ]
 
-# storage/ may be an empty volume (e.g. emptyDir with a read-only root filesystem), so recreate its layout first
-CMD [ "sh", "-c", "mkdir -p storage/logs storage/framework/cache/data storage/framework/sessions storage/framework/views && exec php artisan octane:start --host=0.0.0.0 --port=${OCTANE_PORT} --workers=${OCTANE_WORKERS} --task-workers=${OCTANE_TASK_WORKERS} --max-requests=${OCTANE_MAX_REQUESTS}" ]
+# To change workers or max requests, override the command (e.g. Kubernetes args)
+CMD [ "php", "artisan", "octane:start", "--workers=auto", "--task-workers=auto", "--max-requests=500" ]
